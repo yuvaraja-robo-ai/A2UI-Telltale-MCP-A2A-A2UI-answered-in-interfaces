@@ -42,7 +42,7 @@ the turns a model composes.
 Point it at a different model:
 
 ```bash
-TELLTALE_OLLAMA=http://192.168.32.2:11434 \
+TELLTALE_OLLAMA=http://192.1.0.0.:11434 \
 TELLTALE_OLLAMA_MODEL=gemma4:latest ops/up.sh
 ```
 
