@@ -1,0 +1,4 @@
+[submodule "S14Code"]
+	path = S14Code
+	url = git@github.com:yuvaraja-robo-ai/S14Code.git
+	branch = gauge-cluster-ui

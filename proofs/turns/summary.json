@@ -3,44 +3,61 @@
     "turn": 1,
     "kind": "overview",
     "focus": "",
-    "types": [
+    "componentTypes": [
+      "Card",
       "Column",
       "GaugeCluster",
+      "Notice",
       "Text"
     ],
-    "count": 4,
+    "componentCount": 8,
     "clean": true,
     "coherent": true,
     "rejections": 0,
-    "model": "gemma4:latest"
+    "structureProblems": 0,
+    "model": "gemma4:latest",
+    "attempts": [
+      "attempt 1: 5 types, 8 components"
+    ]
   },
   {
     "turn": 2,
     "kind": "domain",
     "focus": "Lighting",
-    "types": [
+    "componentTypes": [
       "Column",
-      "GaugeCluster",
       "Text"
     ],
-    "count": 4,
+    "componentCount": 2,
     "clean": true,
-    "coherent": false,
+    "coherent": true,
     "rejections": 0,
-    "model": "gemma4:latest"
+    "structureProblems": 0,
+    "model": "gemma4:latest",
+    "attempts": [
+      "attempt 1: 2 types, 2 components \u2014 prose only",
+      "attempt 2: 2 types, 2 components \u2014 prose only",
+      "attempt 3: /composed 404: {\"detail\":\"run has no composed interface (no compose_surface node)\"}"
+    ]
   },
   {
     "turn": 3,
     "kind": "fault",
     "focus": "C0040",
-    "types": [
+    "componentTypes": [
+      "Card",
       "Column",
+      "GaugeCluster",
       "Text"
     ],
-    "count": 2,
+    "componentCount": 8,
     "clean": true,
-    "coherent": true,
+    "coherent": false,
     "rejections": 0,
-    "model": "gemma4:latest"
+    "structureProblems": 1,
+    "model": "gemma4:latest",
+    "attempts": [
+      "attempt 1: 4 types, 8 components"
+    ]
   }
 ]

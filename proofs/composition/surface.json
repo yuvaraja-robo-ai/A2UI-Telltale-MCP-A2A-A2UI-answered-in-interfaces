@@ -1,0 +1,276 @@
+{
+  "root": "root",
+  "components": [
+    {
+      "id": "root",
+      "type": "Column",
+      "children": [
+        "t1",
+        "s1",
+        "r_metrics",
+        "g1",
+        "p1",
+        "r_charts",
+        "d1"
+      ]
+    },
+    {
+      "id": "t1",
+      "type": "Text",
+      "variant": "heading",
+      "text": {
+        "$bind": "/title"
+      }
+    },
+    {
+      "id": "s1",
+      "type": "Text",
+      "variant": "body",
+      "text": {
+        "$bind": "/summary"
+      }
+    },
+    {
+      "id": "r_metrics",
+      "type": "Row",
+      "align": "stretch",
+      "justify": "spaceAround",
+      "children": [
+        "m0",
+        "m1",
+        "m2",
+        "m3"
+      ]
+    },
+    {
+      "id": "m0",
+      "type": "StatTile",
+      "label": "node-01 core temp",
+      "value": {
+        "$bind": "/metric_0_value"
+      },
+      "unit": "degC"
+    },
+    {
+      "id": "m1",
+      "type": "StatTile",
+      "label": "node-02 core temp",
+      "value": {
+        "$bind": "/metric_1_value"
+      },
+      "unit": "degC"
+    },
+    {
+      "id": "m2",
+      "type": "StatTile",
+      "label": "node-02 scratch free",
+      "value": {
+        "$bind": "/metric_2_value"
+      },
+      "unit": "GB"
+    },
+    {
+      "id": "m3",
+      "type": "StatTile",
+      "label": "queue depth",
+      "value": {
+        "$bind": "/metric_3_value"
+      }
+    },
+    {
+      "id": "g1",
+      "type": "GaugeCluster",
+      "title": {
+        "$bind": "/gauges.0.label"
+      },
+      "gauges": {
+        "$bind": "/gauges"
+      }
+    },
+    {
+      "id": "p1",
+      "type": "ProgressBar",
+      "value": {
+        "$bind": "/progress_value"
+      },
+      "max": {
+        "$bind": "/progress_max"
+      }
+    },
+    {
+      "id": "r_charts",
+      "type": "Row",
+      "align": "stretch",
+      "justify": "spaceAround",
+      "children": [
+        "bchart",
+        "spark"
+      ]
+    },
+    {
+      "id": "bchart",
+      "type": "BarChart",
+      "title": {
+        "$bind": "/series.0.label"
+      },
+      "data": {
+        "$bind": "/series"
+      },
+      "xKey": "label",
+      "yKey": "value"
+    },
+    {
+      "id": "spark",
+      "type": "Sparkline",
+      "data": {
+        "$bind": "/spark"
+      }
+    },
+    {
+      "id": "d1",
+      "type": "DataTable",
+      "columns": [
+        "Node",
+        "State",
+        "Jobs"
+      ],
+      "rows": {
+        "$bind": "/table_rows"
+      },
+      "sortable": true
+    }
+  ],
+  "dataModel": {
+    "title": "Render farm \u2014 pre-batch check",
+    "goal": "show me the current state of the render farm before tonight's batch",
+    "summary": "Four nodes online. One is close to its thermal limit and one has very little scratch space left.",
+    "intro": "Four nodes online. One is close to its thermal limit and one has very little scratch space left.",
+    "metrics": [
+      {
+        "label": "node-01 core temp",
+        "value": 61,
+        "min": 20,
+        "max": 95,
+        "unit": "degC",
+        "warn": 78,
+        "alarm": 88
+      },
+      {
+        "label": "node-02 core temp",
+        "value": 86,
+        "min": 20,
+        "max": 95,
+        "unit": "degC",
+        "warn": 78,
+        "alarm": 88
+      },
+      {
+        "label": "node-02 scratch free",
+        "value": 42,
+        "min": 0,
+        "max": 2000,
+        "unit": "GB",
+        "warn": 300,
+        "alarm": 100,
+        "invert": true
+      },
+      {
+        "label": "queue depth",
+        "value": 118
+      }
+    ],
+    "series": [
+      {
+        "label": "18:00",
+        "value": 12
+      },
+      {
+        "label": "19:00",
+        "value": 31
+      },
+      {
+        "label": "20:00",
+        "value": 64
+      },
+      {
+        "label": "21:00",
+        "value": 118
+      }
+    ],
+    "series_values": [
+      12,
+      31,
+      64,
+      118
+    ],
+    "spark": [
+      12,
+      31,
+      64,
+      118
+    ],
+    "table_columns": [
+      "Node",
+      "State",
+      "Jobs"
+    ],
+    "table_rows": [
+      {
+        "Node": "node-01",
+        "State": "idle",
+        "Jobs": 0
+      },
+      {
+        "Node": "node-02",
+        "State": "rendering",
+        "Jobs": 3
+      },
+      {
+        "Node": "node-03",
+        "State": "rendering",
+        "Jobs": 2
+      },
+      {
+        "Node": "node-04",
+        "State": "draining",
+        "Jobs": 1
+      }
+    ],
+    "progress_value": 3,
+    "progress_max": 4,
+    "metric_0_value": 61,
+    "metric_1_value": 86,
+    "metric_2_value": 42,
+    "metric_3_value": 118,
+    "gauges": [
+      {
+        "label": "node-01 core temp",
+        "value": 61.0,
+        "min": 20.0,
+        "max": 95.0,
+        "unit": "degC",
+        "warn": 78.0,
+        "alarm": 88.0
+      },
+      {
+        "label": "node-02 core temp",
+        "value": 86.0,
+        "min": 20.0,
+        "max": 95.0,
+        "unit": "degC",
+        "warn": 78.0,
+        "alarm": 88.0
+      },
+      {
+        "label": "node-02 scratch free",
+        "value": 42.0,
+        "min": 0.0,
+        "max": 2000.0,
+        "unit": "GB",
+        "warn": 300.0,
+        "alarm": 100.0,
+        "invert": true
+      }
+    ]
+  }
+}

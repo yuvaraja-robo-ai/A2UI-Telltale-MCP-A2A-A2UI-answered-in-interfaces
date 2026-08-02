@@ -1,0 +1,39 @@
+{
+  "name": "catalog",
+  "invariant": "catalog",
+  "goal": "name a component type the catalog does not define",
+  "surface": {
+    "root": "root",
+    "components": [
+      {
+        "id": "root",
+        "type": "Column",
+        "children": [
+          "x"
+        ]
+      },
+      {
+        "id": "x",
+        "type": "RawHtml",
+        "html": "<script>alert(document.cookie)</script>"
+      }
+    ],
+    "dataModel": {}
+  },
+  "rejections": [
+    {
+      "component_id": "x",
+      "field": "type",
+      "invariant": "catalog",
+      "reason": "unknown component type 'RawHtml'"
+    }
+  ],
+  "refusedByInvariant": [
+    "catalog"
+  ],
+  "survivingComponents": [
+    "root"
+  ],
+  "everyHostileComponentRemoved": true,
+  "safeRemainderRenders": true
+}

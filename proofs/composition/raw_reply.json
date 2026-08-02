@@ -1,0 +1,15 @@
+{"root":"root","components":[
+  {"id":"t1","type":"Text","variant":"heading","text":{"$bind":"/title"}},
+  {"id":"s1","type":"Text","variant":"body","text":{"$bind":"/summary"}},
+  {"id":"r_metrics","type":"Row","align":"stretch","justify":"spaceAround","children":["m0","m1","m2","m3"]},
+  {"id":"m0","type":"StatTile","label":"node-01 core temp","value":{"$bind":"/metric_0_value"},"unit":"degC","tone":null,"delta":null},
+  {"id":"m1","type":"StatTile","label":"node-02 core temp","value":{"$bind":"/metric_1_value"},"unit":"degC","tone":null,"delta":null},
+  {"id":"m2","type":"StatTile","label":"node-02 scratch free","value":{"$bind":"/metric_2_value"},"unit":"GB","tone":null,"delta":null},
+  {"id":"m3","type":"StatTile","label":"queue depth","value":{"$bind":"/metric_3_value"},"unit":null,"tone":null,"delta":null},
+  {"id":"g1","type":"GaugeCluster","title":{"$bind":"/gauges.0.label"},"gauges":{"$bind":"/gauges"}},
+  {"id":"p1","type":"ProgressBar","value":{"$bind":"/progress_value"},"max":{"$bind":"/progress_max"},"tone":null},
+  {"id":"r_charts","type":"Row","align":"stretch","justify":"spaceAround","children":["bchart","spark"]},
+  {"id":"bchart","type":"BarChart","title":{"$bind":"/series.0.label"},"data":{"$bind":"/series"},"xKey":"label","yKey":"value"},
+  {"id":"spark","type":"Sparkline","data":{"$bind":"/spark"},"tone":null},
+  {"id":"d1","type":"DataTable","columns":["Node","State","Jobs"],"rows":{"$bind":"/table_rows"},"sortable":true,"filterKey":null}
+]}

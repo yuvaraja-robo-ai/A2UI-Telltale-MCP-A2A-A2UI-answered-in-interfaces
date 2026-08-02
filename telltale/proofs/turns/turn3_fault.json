@@ -2,20 +2,16 @@
   "kind": "fault",
   "focus": "C0040",
   "prompt": "The technician tapped the stored fault C0040. Explain what was measured when it was stored and what to check next, using ONLY the readings below.\n\nReadings from the bench bus (JSON):\n{\n \"source\": \"bench\",\n \"health\": \"critical\",\n \"readings\": [\n  {\n   \"label\": \"RadarBlockage\",\n   \"value\": 59.0,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 35.0,\n   \"alarm\": 45.0,\n   \"invert\": false\n  },\n  {\n   \"label\": \"TirePressureFL\",\n   \"value\": 152.0,\n   \"min\": 100,\n   \"max\": 350,\n   \"unit\": \"kPa\",\n   \"warn\": 200.0,\n   \"alarm\": 180.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"WasherFluidLevel\",\n   \"value\": 11.5,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 30.0,\n   \"alarm\": 20.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"BrakeFluidLevel\",\n   \"value\": 41.0,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 60.0,\n   \"alarm\": 45.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"EngCoolantTemp\",\n   \"value\": 124.0,\n   \"min\": -40,\n   \"max\": 215,\n   \"unit\": \"degC\",\n   \"warn\": 110.0,\n   \"alarm\": 118.0,\n   \"invert\": false\n  },\n  {\n   \"label\": \"HeadlampLoadFR\",\n   \"value\": 0.0,\n   \"min\": 0,\n   \"max\": 25,\n   \"unit\": \"A\",\n   \"warn\": 0.6,\n   \"alarm\": 0.3,\n   \"invert\": true\n  }\n ],\n \"storedFaults\": [\n  {\n   \"code\": \"P0562\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x20\"\n  },\n  {\n   \"code\": \"C0035\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x30\"\n  },\n  {\n   \"code\": \"P0217\",\n   \"severity\": \"severe\",\n   \"ecu\": \"0x10\"\n  },\n  {\n   \"code\": \"U0104\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x50\"\n  },\n  {\n   \"code\": \"B2477\",\n   \"severity\": \"severe\",\n   \"ecu\": \"0x60\"\n  },\n  {\n   \"code\": \"B1318\",\n   \"severity\": \"info\",\n   \"ecu\": \"0x40\"\n  },\n  {\n   \"code\": \"C0040\",\n   \"severity\": \"critical\",\n   \"ecu\": \"0x30\"\n  }\n ]\n}\n\nReport every reading you use as a metric carrying its own label, value, unit, min, max and the warn/alarm limits given here, so the numbers keep their scale. Do not invent readings that are not listed.",
-  "run_id": "run-34041eb02af8",
+  "run_id": "run-a0efd29fd5a8",
   "provider": "ollama",
   "model": "gemma4:latest",
   "clean": true,
-  "coherent": false,
-  "structure": [
-    "'g1' binds title to '/gauges.title', which resolves to nothing in the data model"
-  ],
+  "coherent": true,
+  "structure": [],
   "rejections": [],
-  "componentCount": 8,
+  "componentCount": 2,
   "componentTypes": [
-    "Card",
     "Column",
-    "GaugeCluster",
     "Text"
   ],
   "surface": {
@@ -25,11 +21,7 @@
         "id": "root",
         "type": "Column",
         "children": [
-          "t1",
-          "s1",
-          "c0",
-          "c1",
-          "g1"
+          "t1"
         ]
       },
       {
@@ -37,81 +29,17 @@
         "type": "Text",
         "variant": "heading",
         "text": {
-          "$bind": "/title"
-        }
-      },
-      {
-        "id": "s1",
-        "type": "Text",
-        "variant": "body",
-        "text": {
-          "$bind": "/intro"
-        }
-      },
-      {
-        "id": "c0",
-        "type": "Card",
-        "title": {
-          "$bind": "/section_0_heading"
-        },
-        "children": [
-          "p0"
-        ]
-      },
-      {
-        "id": "p0",
-        "type": "Text",
-        "variant": "body",
-        "text": {
-          "$bind": "/section_0_points"
-        }
-      },
-      {
-        "id": "c1",
-        "type": "Card",
-        "title": {
-          "$bind": "/section_1_heading"
-        },
-        "children": [
-          "p1"
-        ]
-      },
-      {
-        "id": "p1",
-        "type": "Text",
-        "variant": "body",
-        "text": {
-          "$bind": "/section_1_points"
-        }
-      },
-      {
-        "id": "g1",
-        "type": "GaugeCluster",
-        "title": {
-          "$bind": "/gauges.title"
-        },
-        "gauges": {
-          "$bind": "/gauges"
+          "$bind": "/goal"
         }
       }
     ],
     "dataModel": {
-      "title": "Fault C0040 Analysis and Inspection Plan",
+      "title": "The technician tapped the stored fault C0040. Explain what was measured when it was stored and what to check next, using ONLY the readings below.\n\nReadings from the bench bus (JSON):\n{\n \"source\": \"bench\",\n \"health\": \"critical\",\n \"readings\": [\n  {\n   \"label\": \"RadarBlockage\",\n   \"value\": 59.0,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 35.0,\n   \"alarm\": 45.0,\n   \"invert\": false\n  },\n  {\n   \"label\": \"TirePressureFL\",\n   \"value\": 152.0,\n   \"min\": 100,\n   \"max\": 350,\n   \"unit\": \"kPa\",\n   \"warn\": 200.0,\n   \"alarm\": 180.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"WasherFluidLevel\",\n   \"value\": 11.5,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 30.0,\n   \"alarm\": 20.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"BrakeFluidLevel\",\n   \"value\": 41.0,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 60.0,\n   \"alarm\": 45.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"EngCoolantTemp\",\n   \"value\": 124.0,\n   \"min\": -40,\n   \"max\": 215,\n   \"unit\": \"degC\",\n   \"warn\": 110.0,\n   \"alarm\": 118.0,\n   \"invert\": false\n  },\n  {\n   \"label\": \"HeadlampLoadFR\",\n   \"value\": 0.0,\n   \"min\": 0,\n   \"max\": 25,\n   \"unit\": \"A\",\n   \"warn\": 0.6,\n   \"alarm\": 0.3,\n   \"invert\": true\n  }\n ],\n \"storedFaults\": [\n  {\n   \"code\": \"P0562\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x20\"\n  },\n  {\n   \"code\": \"C0035\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x30\"\n  },\n  {\n   \"code\": \"P0217\",\n   \"severity\": \"severe\",\n   \"ecu\": \"0x10\"\n  },\n  {\n   \"code\": \"U0104\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x50\"\n  },\n  {\n   \"code\": \"B2477\",\n   \"severity\": \"severe\",\n   \"ecu\": \"0x60\"\n  },\n  {\n   \"code\": \"B1318\",\n   \"severity\": \"info\",\n   \"ecu\": \"0x40\"\n  },\n  {\n   \"code\": \"C0040\",\n   \"severity\": \"critical\",\n   \"ecu\": \"0x30\"\n  }\n ]\n}\n\nReport every reading you use as a metric carrying its own label, value, unit, min, max and the warn/alarm limits given here, so the numbers keep their scale. Do not invent readings that are not listed.",
       "goal": "The technician tapped the stored fault C0040. Explain what was measured when it was stored and what to check next, using ONLY the readings below.\n\nReadings from the bench bus (JSON):\n{\n \"source\": \"bench\",\n \"health\": \"critical\",\n \"readings\": [\n  {\n   \"label\": \"RadarBlockage\",\n   \"value\": 59.0,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 35.0,\n   \"alarm\": 45.0,\n   \"invert\": false\n  },\n  {\n   \"label\": \"TirePressureFL\",\n   \"value\": 152.0,\n   \"min\": 100,\n   \"max\": 350,\n   \"unit\": \"kPa\",\n   \"warn\": 200.0,\n   \"alarm\": 180.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"WasherFluidLevel\",\n   \"value\": 11.5,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 30.0,\n   \"alarm\": 20.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"BrakeFluidLevel\",\n   \"value\": 41.0,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 60.0,\n   \"alarm\": 45.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"EngCoolantTemp\",\n   \"value\": 124.0,\n   \"min\": -40,\n   \"max\": 215,\n   \"unit\": \"degC\",\n   \"warn\": 110.0,\n   \"alarm\": 118.0,\n   \"invert\": false\n  },\n  {\n   \"label\": \"HeadlampLoadFR\",\n   \"value\": 0.0,\n   \"min\": 0,\n   \"max\": 25,\n   \"unit\": \"A\",\n   \"warn\": 0.6,\n   \"alarm\": 0.3,\n   \"invert\": true\n  }\n ],\n \"storedFaults\": [\n  {\n   \"code\": \"P0562\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x20\"\n  },\n  {\n   \"code\": \"C0035\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x30\"\n  },\n  {\n   \"code\": \"P0217\",\n   \"severity\": \"severe\",\n   \"ecu\": \"0x10\"\n  },\n  {\n   \"code\": \"U0104\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x50\"\n  },\n  {\n   \"code\": \"B2477\",\n   \"severity\": \"severe\",\n   \"ecu\": \"0x60\"\n  },\n  {\n   \"code\": \"B1318\",\n   \"severity\": \"info\",\n   \"ecu\": \"0x40\"\n  },\n  {\n   \"code\": \"C0040\",\n   \"severity\": \"critical\",\n   \"ecu\": \"0x30\"\n  }\n ]\n}\n\nReport every reading you use as a metric carrying its own label, value, unit, min, max and the warn/alarm limits given here, so the numbers keep their scale. Do not invent readings that are not listed.",
-      "summary": "The stored fault C0040 indicates a critical issue related to the system monitored by ECU 0x30, which corresponds to low washer fluid level based on current readings.",
+      "summary": "The technician tapped the stored fault C0040. Explain what was measured when it was stored and what to check next, using ONLY the readings below.\n\nReadings from the bench bus (JSON):\n{\n \"source\": \"bench\",\n \"health\": \"critical\",\n \"readings\": [\n  {\n   \"label\": \"RadarBlockage\",\n   \"value\": 59.0,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 35.0,\n   \"alarm\": 45.0,\n   \"invert\": false\n  },\n  {\n   \"label\": \"TirePressureFL\",\n   \"value\": 152.0,\n   \"min\": 100,\n   \"max\": 350,\n   \"unit\": \"kPa\",\n   \"warn\": 200.0,\n   \"alarm\": 180.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"WasherFluidLevel\",\n   \"value\": 11.5,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 30.0,\n   \"alarm\": 20.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"BrakeFluidLevel\",\n   \"value\": 41.0,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 60.0,\n   \"alarm\": 45.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"EngCoolantTemp\",\n   \"value\": 124.0,\n   \"min\": -40,\n   \"max\": 215,\n   \"unit\": \"degC\",\n   \"warn\": 110.0,\n   \"alarm\": 118.0,\n   \"invert\": false\n  },\n  {\n   \"label\": \"HeadlampLoadFR\",\n   \"value\": 0.0,\n   \"min\": 0,\n   \"max\": 25,\n   \"unit\": \"A\",\n   \"warn\": 0.6,\n   \"alarm\": 0.3,\n   \"invert\": true\n  }\n ],\n \"storedFaults\": [\n  {\n   \"code\": \"P0562\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x20\"\n  },\n  {\n   \"code\": \"C0035\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x30\"\n  },\n  {\n   \"code\": \"P0217\",\n   \"severity\": \"severe\",\n   \"ecu\": \"0x10\"\n  },\n  {\n   \"code\": \"U0104\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x50\"\n  },\n  {\n   \"code\": \"B2477\",\n   \"severity\": \"severe\",\n   \"ecu\": \"0x60\"\n  },\n  {\n   \"code\": \"B1318\",\n   \"severity\": \"info\",\n   \"ecu\": \"0x40\"\n  },\n  {\n   \"code\": \"C0040\",\n   \"severity\": \"critical\",\n   \"ecu\": \"0x30\"\n  }\n ]\n}\n\nReport every reading you use as a metric carrying its own label, value, unit, min, max and the warn/alarm limits given here, so the numbers keep their scale. Do not invent readings that are not listed.",
       "results": [],
       "items": [],
-      "metrics": [
-        {
-          "label": "EngCoolantTemp",
-          "value": 124.0,
-          "unit": "degC",
-          "min": -40,
-          "max": 215,
-          "warn": 110.0,
-          "alarm": 118.0
-        }
-      ],
+      "metrics": [],
       "spark": [],
       "table_rows": [],
       "item_count": 0,
@@ -119,80 +47,38 @@
       "subjects": [],
       "timeline": [
         {
-          "time": "237",
+          "time": "329",
           "label": "run_started"
         },
         {
-          "time": "238",
+          "time": "330",
           "label": "graph_patched"
         },
         {
-          "time": "239",
+          "time": "331",
           "label": "task_started content"
         },
         {
-          "time": "240",
+          "time": "332",
           "label": "task_succeeded content"
         },
         {
-          "time": "241",
+          "time": "333",
           "label": "graph_patched"
         },
         {
-          "time": "242",
+          "time": "334",
           "label": "task_started surface"
         }
       ],
       "progress_value": 1,
-      "progress_max": 2,
-      "intro": "The stored fault C0040 indicates a critical issue related to the system monitored by ECU 0x30, which corresponds to low washer fluid level based on current readings.",
-      "section_0_heading": "Diagnosis: Condition at Fault Storage (C0040)",
-      "section_0_points": "\u2022 Fault C0040 is associated with critically low Washer Fluid Level.\n\u2022 The measured value (11.5%) is below the alarm threshold (20.0%).",
-      "section_1_heading": "Recommended Next Steps and System Checks",
-      "section_1_points": "\u2022 Inspect washer fluid reservoir for leaks or blockage.\n\u2022 Check other critical systems flagged by warnings/alarms.",
-      "sections": [
-        {
-          "heading": "Diagnosis: Condition at Fault Storage (C0040)",
-          "points": [
-            "Fault C0040 is associated with critically low Washer Fluid Level.",
-            "The measured value (11.5%) is below the alarm threshold (20.0%)."
-          ]
-        },
-        {
-          "heading": "Recommended Next Steps and System Checks",
-          "points": [
-            "Inspect washer fluid reservoir for leaks or blockage.",
-            "Check other critical systems flagged by warnings/alarms."
-          ]
-        }
-      ],
-      "section_events": [
-        {
-          "time": "Diagnosis: Condition at Fault Storage (C0040)",
-          "label": "Fault C0040 is associated with critically low Washer Fluid Level.; The measured value (11.5%) is below the alarm threshold (20.0%)."
-        },
-        {
-          "time": "Recommended Next Steps and System Checks",
-          "label": "Inspect washer fluid reservoir for leaks or blockage.; Check other critical systems flagged by warnings/alarms."
-        }
-      ],
-      "metric_0_value": 124.0,
-      "gauges": [
-        {
-          "label": "EngCoolantTemp",
-          "value": 124.0,
-          "min": -40.0,
-          "max": 215.0,
-          "unit": "degC",
-          "warn": 110.0,
-          "alarm": 118.0
-        }
-      ]
+      "progress_max": 2
     }
   },
-  "attempt": 1,
+  "attempt": 2,
   "impoverished": false,
   "attempts": [
-    "attempt 1: 4 types, 8 components"
+    "attempt 1: /composed 404: {\"detail\":\"run has no composed interface (no compose_surface node)\"}",
+    "attempt 2: 2 types, 2 components"
   ]
 }

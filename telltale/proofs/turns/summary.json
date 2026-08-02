@@ -1,0 +1,46 @@
+[
+  {
+    "turn": 1,
+    "kind": "overview",
+    "focus": "",
+    "types": [
+      "Column",
+      "GaugeCluster",
+      "Text"
+    ],
+    "count": 4,
+    "clean": true,
+    "coherent": true,
+    "rejections": 0,
+    "model": "gemma4:latest"
+  },
+  {
+    "turn": 2,
+    "kind": "domain",
+    "focus": "Lighting",
+    "types": [
+      "Column",
+      "GaugeCluster",
+      "Text"
+    ],
+    "count": 4,
+    "clean": true,
+    "coherent": false,
+    "rejections": 0,
+    "model": "gemma4:latest"
+  },
+  {
+    "turn": 3,
+    "kind": "fault",
+    "focus": "C0040",
+    "types": [
+      "Column",
+      "Text"
+    ],
+    "count": 2,
+    "clean": true,
+    "coherent": true,
+    "rejections": 0,
+    "model": "gemma4:latest"
+  }
+]

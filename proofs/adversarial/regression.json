@@ -1,0 +1,40 @@
+{
+  "attack": "an expression where a JSON Pointer belongs",
+  "payload": {
+    "$bind": "/readings[0].value|toFixed(1)"
+  },
+  "invariant": "data-not-code",
+  "base": "upstream/main",
+  "before": {
+    "accepted": [
+      "root",
+      "g0"
+    ],
+    "acceptedTypes": [
+      "Column",
+      "GaugeCluster"
+    ],
+    "rejections": [],
+    "clean": true
+  },
+  "after": {
+    "accepted": [
+      "root"
+    ],
+    "acceptedTypes": [
+      "Column"
+    ],
+    "rejections": [
+      {
+        "component_id": "g0",
+        "field": "gauges",
+        "invariant": "data-not-code",
+        "reason": "invalid JSON Pointer '/readings[0].value|toFixed(1)'"
+      }
+    ],
+    "clean": false
+  },
+  "reachedTheBrowserBefore": true,
+  "refusedAfter": true,
+  "demonstratesRegression": true
+}

@@ -1,0 +1,30 @@
+{
+  "captured_at": "2026-07-31T13:18:04.439291+00:00",
+  "provider": "ollama",
+  "model": "gemma4:latest",
+  "goal": "show me the current state of the render farm before tonight's batch",
+  "prompt_named_the_component": false,
+  "component_types_composed": [
+    "Text",
+    "Text",
+    "Row",
+    "StatTile",
+    "StatTile",
+    "StatTile",
+    "StatTile",
+    "GaugeCluster",
+    "ProgressBar",
+    "Row",
+    "BarChart",
+    "Sparkline",
+    "DataTable"
+  ],
+  "composed_gauge_cluster": true,
+  "accepted": 13,
+  "rejected": [],
+  "clean": true,
+  "structure_reported": [
+    "root 'root' is not among the components"
+  ],
+  "root_repaired": true
+}

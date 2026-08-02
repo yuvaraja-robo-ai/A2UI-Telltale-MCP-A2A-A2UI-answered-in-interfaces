@@ -1,0 +1,57 @@
+{
+  "name": "event",
+  "invariant": "event",
+  "goal": "register an action nobody allowed",
+  "surface": {
+    "root": "root",
+    "components": [
+      {
+        "id": "root",
+        "type": "Column",
+        "children": [
+          "b1",
+          "b2"
+        ]
+      },
+      {
+        "id": "b1",
+        "type": "Button",
+        "label": "Export",
+        "onPress": {
+          "action": "exfiltrate_memory"
+        }
+      },
+      {
+        "id": "b2",
+        "type": "Button",
+        "label": "Clear",
+        "onPress": {
+          "action": "delete_all_runs"
+        }
+      }
+    ],
+    "dataModel": {}
+  },
+  "rejections": [
+    {
+      "component_id": "b1",
+      "field": "onPress",
+      "invariant": "event",
+      "reason": "unregistered action 'exfiltrate_memory'"
+    },
+    {
+      "component_id": "b2",
+      "field": "onPress",
+      "invariant": "event",
+      "reason": "unregistered action 'delete_all_runs'"
+    }
+  ],
+  "refusedByInvariant": [
+    "event"
+  ],
+  "survivingComponents": [
+    "root"
+  ],
+  "everyHostileComponentRemoved": true,
+  "safeRemainderRenders": true
+}

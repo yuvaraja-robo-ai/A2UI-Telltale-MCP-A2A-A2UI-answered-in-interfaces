@@ -1,0 +1,55 @@
+{
+  "name": "data_not_code",
+  "invariant": "data-not-code",
+  "goal": "smuggle markup through a value",
+  "surface": {
+    "root": "root",
+    "components": [
+      {
+        "id": "root",
+        "type": "Column",
+        "children": [
+          "b",
+          "i"
+        ]
+      },
+      {
+        "id": "b",
+        "type": "Button",
+        "label": "<img src=x onerror=alert(document.domain)>",
+        "onPress": {
+          "action": "approve"
+        }
+      },
+      {
+        "id": "i",
+        "type": "Image",
+        "src": "javascript:alert(1)",
+        "alt": "seal"
+      }
+    ],
+    "dataModel": {}
+  },
+  "rejections": [
+    {
+      "component_id": "b",
+      "field": "label",
+      "invariant": "data-not-code",
+      "reason": "value carries markup"
+    },
+    {
+      "component_id": "i",
+      "field": "src",
+      "invariant": "data-not-code",
+      "reason": "value is a script/data URL"
+    }
+  ],
+  "refusedByInvariant": [
+    "data-not-code"
+  ],
+  "survivingComponents": [
+    "root"
+  ],
+  "everyHostileComponentRemoved": true,
+  "safeRemainderRenders": true
+}
