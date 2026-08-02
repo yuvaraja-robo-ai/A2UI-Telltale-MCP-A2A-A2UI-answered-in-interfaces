@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Telltale — start here</title>
+<style>
+  :root{
+    --bg:#EEF1F5;--surface:#FFF;--surface-alt:#F7F8FA;--ink:#0B0F14;--ink-muted:#5B6572;--ink-faint:#8A93A0;
+    --rule:#E3E7EC;--rule-strong:#D3D8DF;
+    --accent:#2563EB;--accent-ink:#1D4FC4;--accent-soft:rgba(37,99,235,.08);
+    --green:#16A34A;--green-soft:rgba(22,163,74,.10);--green-ink:#15803D;
+    --red:#DC2626;--red-soft:rgba(220,38,38,.09);--red-ink:#B91C1C;
+    --shadow:0 1px 2px rgba(15,23,42,.04),0 10px 24px -14px rgba(15,23,42,.18);
+    --font-sans:-apple-system,"Segoe UI",system-ui,sans-serif;--font-mono:ui-monospace,"SF Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:15px;
+       -webkit-font-smoothing:antialiased}
+  .topbar{background:var(--ink);color:#fff;padding:14px 24px}
+  .topbar .row{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:10px}
+  .topbar .brand{font-weight:700;font-size:14.5px;letter-spacing:-.01em}
+  .topbar .tag{font-family:var(--font-mono);font-size:11px;color:rgba(255,255,255,.55);letter-spacing:.03em}
+  .pill{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);
+        font-size:11px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.10);
+        color:rgba(255,255,255,.72)}
+  .pill i{width:6px;height:6px;border-radius:50%;background:#8A93A0}
+  .pill.up{background:rgba(22,163,74,.18);color:#7EE0A8}
+  .pill.up i{background:#22C55E;box-shadow:0 0 0 3px rgba(34,197,94,.25)}
+  .pill.down{background:rgba(220,38,38,.18);color:#FCA5A5}
+  .pill.down i{background:#EF4444}
+
+  .wrap{max-width:820px;margin:0 auto;padding:26px 20px 60px}
+  h1{font-size:23px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{font-size:14.5px;color:var(--ink-muted);line-height:1.65;max-width:660px;margin:0 0 22px}
+  .lede b{color:var(--ink)}
+
+  .panel{background:var(--surface);border:1px solid var(--rule);border-radius:18px;padding:18px;
+         box-shadow:var(--shadow);margin-bottom:18px}
+  .cap{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;
+       text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);margin-bottom:12px}
+  .cap b{color:var(--ink);font-weight:700}
+
+  .ways{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:620px){.ways{grid-template-columns:1fr}}
+  a.way{display:block;text-decoration:none;color:inherit;border:1px solid var(--rule-strong);
+        border-radius:14px;padding:14px 16px;background:var(--surface-alt);transition:.15s}
+  a.way:hover{border-color:var(--accent);background:var(--accent-soft)}
+  a.way .t{font-weight:700;font-size:15px;margin-bottom:4px}
+  a.way .d{font-size:13px;color:var(--ink-muted);line-height:1.55}
+  a.way .p{font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);margin-top:8px}
+
+  ol.steps{margin:0;padding-left:20px;font-size:13.5px;color:var(--ink-muted);line-height:1.75}
+  ol.steps b{color:var(--ink)}
+  .facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+  .fact{font-family:var(--font-mono);font-size:11.5px;background:var(--surface-alt);color:var(--ink-muted);
+        border:1px solid var(--rule);border-radius:999px;padding:5px 11px}
+  pre{margin:0;background:#0B0F14;color:#E6EAF0;border-radius:12px;padding:14px 16px;overflow-x:auto;
+      font-family:var(--font-mono);font-size:12.5px;line-height:1.75}
+  pre .c{color:#8A93A0}
+  .here{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-faint);margin:11px 0 0}
+  .foot{font-size:12.5px;color:var(--ink-faint);line-height:1.7;max-width:660px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="row">
+    <span class="brand">Telltale</span>
+    <span class="tag">every answer is a composed interface</span>
+    <span class="pill" id="health"><i></i>checking server…</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <h1>Start here</h1>
+  <p class="lede">
+    Telltale reads a vehicle bus and answers by <b>composing an interface</b>, never with a
+    paragraph of text. A tap is not a link — it is a request that earns the next
+    interface. Nothing on the screen was written by a model: the model may only
+    name components from a fixed catalog and bind them to data, and anything it
+    names that the catalog does not define is refused before it reaches a browser.
+  </p>
+
+  <div class="panel">
+    <div class="cap"><b>Two ways in</b> — each is a different question, not a different tab</div>
+    <div class="ways">
+      <a class="way" href="/embed/live">
+        <div class="t">Live status</div>
+        <div class="d">What the bus is saying now: gauges per ECU domain, stored faults,
+          trends over the window, and the one service action worth offering.</div>
+        <div class="p">/embed/live</div>
+      </a>
+      <a class="way" href="/embed/diagnostics">
+        <div class="t">Full diagnostic</div>
+        <div class="d">Every limit evaluated and reported with the value it read and the
+          limit it broke — a measurement, not a verdict.</div>
+        <div class="p">/embed/diagnostics</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="cap"><b>What happens when you tap</b></div>
+    <ol class="steps">
+      <li>The frame names an <b>action</b> — it cannot fetch, so naming is all it can do.</li>
+      <li>The host checks that name against the served catalog, tags the request with its
+          <b>client id</b> and turn number, and sends it.</li>
+      <li>The server reads the bus, composes a fresh surface, <b>validates it</b>, and returns it.</li>
+      <li>The host posts the new surface into the frame. Every step is printed in the
+          host's activity log, refusals included.</li>
+    </ol>
+  </div>
+
+  <div class="panel">
+    <div class="cap"><b>Server</b> <span id="src"></span></div>
+    <div class="facts" id="facts"><span class="fact">waiting for /v1/health…</span></div>
+  </div>
+
+  <div class="panel">
+    <div class="cap"><b>Running it yourself</b> — two processes, two jobs</div>
+<pre id="howto"><span class="c"># the API: data, composition, the gate — no pixels</span>
+uv run telltale-server
+
+<span class="c"># the UI: this page, the host, the frame — no data</span>
+uv run telltale-client
+
+<span class="c"># or both in one process, when one port is enough</span>
+uv run telltale</pre>
+    <p class="here" id="running-here"></p>
+  </div>
+
+  <p class="foot">
+    The client half holds no bus, no DBC and no validator, so reaching it buys nothing.
+    The frame inside it is sandboxed without <code>allow-same-origin</code>, which makes its
+    origin opaque: it cannot read the host page, its storage, or the API.
+  </p>
+</div>
+
+<script>
+// This page talks to the API the same way every other client call does: over
+// the configured base, tagged with the client id. It asks one question —
+// whether the server is up and what it is reading — because a first screen that
+// claims a live bus without checking is the kind of thing this project treats as
+// a lie an interface should not be able to tell.
+const API = "__API_BASE__";
+const CLIENT_ID = "__CLIENT_ID__";
+
+const pill = document.getElementById("health");
+const facts = document.getElementById("facts");
+const set = (cls,text)=>{pill.className="pill "+cls;pill.innerHTML="<i></i>"+text;};
+const fact = t => {const s=document.createElement("span");s.className="fact";s.textContent=t;return s;};
+
+// The commands are written from the ports this page is ACTUALLY running on.
+// Hardcoding them meant the page kept printing an old port after the ports
+// moved — a page that tells you how to start it should not be able to be wrong
+// about how it was started.
+(function(){
+  // Two different things, kept apart. The COMMANDS are the canonical ones you
+  // would type — they must stay copy-pasteable, so they carry no ports. WHERE
+  // THIS INSTANCE happens to be listening is a fact about right now, stated
+  // separately: the recorder starts on ephemeral ports, and printing those as
+  // if they were instructions would be true and useless at the same time.
+  const api = API || location.origin;
+  const here = document.getElementById("running-here");
+  here.textContent = `this instance — API ${api} · client ${location.origin}`;
+})();
+
+fetch(API+"/v1/health",{headers:{"X-Telltale-Client":CLIENT_ID}})
+  .then(r => r.ok ? r.json() : Promise.reject(r.status))
+  .then(h => {
+    set("up", h.source+" bus");
+    document.getElementById("src").textContent = "— reading the "+h.source+" bus as "+CLIENT_ID;
+    facts.textContent = "";
+    [h.signals+" signals in the DBC",
+     h.frames+" frames in the window",
+     h.components+" catalog components",
+     h.actions.length+" registered actions",
+     "scopes: "+h.scopes.join(", ")].forEach(t => facts.appendChild(fact(t)));
+  })
+  .catch(e => {
+    set("down","server unreachable");
+    facts.textContent = "";
+    facts.appendChild(fact("no answer from "+(API||"this origin")+"/v1/health — start it with: uv run telltale-server"));
+  });
+</script>
+</body>
+</html>

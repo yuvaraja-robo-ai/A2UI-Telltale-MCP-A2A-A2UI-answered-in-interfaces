@@ -1,0 +1,91 @@
+VERSION "Telltale bench rig — synthetic ECU database for the S14 CAN demo"
+
+NS_ :
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	BA_DEF_DEF_
+
+BS_:
+
+BU_: ECM BMS CHASSIS BCM ADAS IVI LIGHT SENS DIAG
+
+
+BO_ 256 EngineData: 8 ECM
+ SG_ EngineSpeed : 0|16@1+ (0.25,0) [0|8000] "rpm" DIAG
+ SG_ VehicleSpeed : 16|16@1+ (0.01,0) [0|250] "km/h" DIAG
+ SG_ EngCoolantTemp : 32|8@1+ (1,-40) [-40|215] "degC" DIAG
+ SG_ ThrottlePosition : 40|8@1+ (0.4,0) [0|100] "%" DIAG
+ SG_ EngineOilTemp : 48|8@1+ (1,-40) [-40|215] "degC" DIAG
+
+BO_ 512 BatteryData: 8 BMS
+ SG_ StateOfCharge : 0|8@1+ (0.5,0) [0|100] "%" DIAG
+ SG_ PackVoltage : 8|16@1+ (0.01,0) [0|500] "V" DIAG
+ SG_ PackCurrent : 24|16@1- (0.1,0) [-1000|1000] "A" DIAG
+ SG_ PackTemp : 40|8@1+ (1,-40) [-40|100] "degC" DIAG
+
+BO_ 768 ChassisData: 8 CHASSIS
+ SG_ TirePressureFL : 0|8@1+ (2,100) [100|350] "kPa" DIAG
+ SG_ TirePressureFR : 8|8@1+ (2,100) [100|350] "kPa" DIAG
+ SG_ TirePressureRL : 16|8@1+ (2,100) [100|350] "kPa" DIAG
+ SG_ TirePressureRR : 24|8@1+ (2,100) [100|350] "kPa" DIAG
+ SG_ BrakeFluidLevel : 32|8@1+ (0.5,0) [0|100] "%" DIAG
+
+BO_ 1024 BodyData: 8 BCM
+ SG_ CabinTemp : 0|8@1+ (0.5,-40) [-40|87] "degC" DIAG
+ SG_ FuelLevel : 8|8@1+ (0.5,0) [0|100] "%" DIAG
+ SG_ WasherFluidLevel : 16|8@1+ (0.5,0) [0|100] "%" DIAG
+ SG_ DoorsAjar : 24|4@1+ (1,0) [0|4] "" DIAG
+ SG_ CentralLockEngaged : 28|1@1+ (1,0) [0|1] "" DIAG
+ SG_ WindowPositionFL : 32|8@1+ (0.5,0) [0|100] "%" DIAG
+
+BO_ 1280 AdasData: 8 ADAS
+ SG_ ForwardObstacleDistance : 0|16@1+ (0.1,0) [0|250] "m" DIAG
+ SG_ LaneConfidence : 16|8@1+ (0.5,0) [0|100] "%" DIAG
+ SG_ CruiseSetSpeed : 24|8@1+ (1,0) [0|200] "km/h" DIAG
+ SG_ DriverAttention : 32|8@1+ (0.5,0) [0|100] "%" DIAG
+ SG_ RadarBlockage : 40|8@1+ (0.5,0) [0|100] "%" DIAG
+
+BO_ 1536 InfotainmentData: 8 IVI
+ SG_ AudioVolume : 0|8@1+ (0.5,0) [0|100] "%" DIAG
+ SG_ ScreenBrightness : 8|8@1+ (0.5,0) [0|100] "%" DIAG
+ SG_ GpsSatellites : 16|8@1+ (1,0) [0|32] "" DIAG
+ SG_ CabinNoise : 24|8@1+ (0.5,0) [0|120] "dB" DIAG
+ SG_ HeadUnitTemp : 32|8@1+ (1,-40) [-40|110] "degC" DIAG
+
+BO_ 1664 LightingData: 8 LIGHT
+ SG_ HeadlampLoadFL : 0|8@1+ (0.1,0) [0|25] "A" DIAG
+ SG_ HeadlampLoadFR : 8|8@1+ (0.1,0) [0|25] "A" DIAG
+ SG_ BrakeLampLoad : 16|8@1+ (0.1,0) [0|25] "A" DIAG
+ SG_ AmbientLightLevel : 24|16@1+ (1,0) [0|65535] "lx" DIAG
+ SG_ IndicatorState : 40|8@1+ (1,0) [0|3] "" DIAG
+
+BO_ 1696 SensorData: 8 SENS
+ SG_ AmbientTemp : 0|8@1+ (0.5,-40) [-40|87] "degC" DIAG
+ SG_ Humidity : 8|8@1+ (0.5,0) [0|100] "%" DIAG
+ SG_ BarometricPressure : 16|16@1+ (0.05,0) [0|1200] "hPa" DIAG
+ SG_ YawRate : 32|16@1- (0.01,0) [-100|100] "deg/s" DIAG
+ SG_ LongAccel : 48|16@1- (0.001,0) [-20|20] "m/s2" DIAG
+
+BO_ 1792 DiagnosticCodes: 8 DIAG
+ SG_ DtcCount : 0|8@1+ (1,0) [0|255] "" ECM
+ SG_ ActiveDtc : 8|24@1+ (1,0) [0|16777215] "" ECM
+ SG_ DtcSeverity : 32|8@1+ (1,0) [0|3] "" ECM
+
+CM_ BO_ 256 "Powertrain signals sampled at 20 Hz.";
+CM_ BO_ 512 "High-voltage battery pack, 5 Hz.";
+CM_ BO_ 768 "Chassis and braking signals, 5 Hz.";
+CM_ BO_ 1024 "Body control module: cabin, fluids, closures. 2 Hz.";
+CM_ BO_ 1280 "Driver assistance: forward radar, lane tracking, driver monitoring. 10 Hz.";
+CM_ BO_ 1536 "Head unit and cabin audio. 1 Hz.";
+CM_ BO_ 1664 "Exterior lighting loads and ambient light sensing. 2 Hz.";
+CM_ BO_ 1696 "Environmental and inertial sensor cluster. 10 Hz.";
+CM_ BO_ 1792 "Stored diagnostic trouble codes, event driven.";
+CM_ SG_ 256 EngCoolantTemp "Coolant temperature at the engine outlet.";
+CM_ SG_ 768 BrakeFluidLevel "Reservoir level as a percentage of full.";
+CM_ SG_ 1792 ActiveDtc "Raw DTC as a 24-bit value; decoded to Pxxxx form by the reader.";
+
+VAL_ 1792 DtcSeverity 0 "info" 1 "warn" 2 "severe" 3 "critical" ;
+VAL_ 1664 IndicatorState 0 "off" 1 "left" 2 "right" 3 "hazard" ;

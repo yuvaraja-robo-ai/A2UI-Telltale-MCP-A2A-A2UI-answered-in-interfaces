@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MCP Apps host — an embedded A2UI surface</title>
+<style>
+  :root{
+    --bg:#EEF1F5;--surface:#FFF;--surface-alt:#F7F8FA;--ink:#0B0F14;--ink-muted:#5B6572;--ink-faint:#8A93A0;
+    --rule:#E3E7EC;--rule-strong:#D3D8DF;
+    --accent:#2563EB;--accent-ink:#1D4FC4;--accent-soft:rgba(37,99,235,.08);
+    --green:#16A34A;--green-soft:rgba(22,163,74,.10);--green-ink:#15803D;
+    --red:#DC2626;--red-soft:rgba(220,38,38,.09);--red-ink:#B91C1C;
+    --shadow:0 1px 2px rgba(15,23,42,.04),0 10px 24px -14px rgba(15,23,42,.18);
+    --font-sans:-apple-system,"Segoe UI",system-ui,sans-serif;--font-mono:ui-monospace,"SF Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:15px;
+       -webkit-font-smoothing:antialiased}
+  .topbar{background:var(--ink);color:#fff;padding:14px 24px}
+  .topbar .row{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:10px}
+  .topbar .brand{font-weight:700;font-size:14.5px;letter-spacing:-.01em}
+  .topbar .tag{font-family:var(--font-mono);font-size:11px;color:rgba(255,255,255,.55);
+              letter-spacing:.03em}
+  .live{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);
+        font-size:11px;color:#7EE0A8;background:rgba(22,163,74,.18);padding:4px 10px;border-radius:999px}
+  .live i{width:6px;height:6px;border-radius:50%;background:#22C55E;box-shadow:0 0 0 3px rgba(34,197,94,.25)}
+
+  .wrap{max-width:820px;margin:0 auto;padding:26px 20px 60px}
+  .note{font-size:13px;color:var(--ink-muted);line-height:1.65;margin-bottom:18px;max-width:640px}
+  .note b{color:var(--ink)}
+
+  .panel{background:var(--surface);border:1px solid var(--rule);border-radius:18px;padding:16px;
+         box-shadow:var(--shadow)}
+  .panel .cap{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;
+              text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);margin-bottom:10px}
+  .panel .cap b{color:var(--ink);font-weight:700}
+  .panel .cap .pin{margin-left:auto;color:var(--ink-faint);font-size:10.5px}
+  iframe{width:100%;border:1px solid var(--rule-strong);border-radius:14px;background:#fff;
+         min-height:40px;display:block}
+
+  .logcard{margin-top:18px}
+  .logcard .cap{margin-bottom:12px}
+  .log{display:flex;flex-direction:column;gap:8px}
+  .log .line{position:relative;padding:9px 12px 9px 30px;border-radius:10px;font-size:12.5px;
+             font-family:var(--font-mono);background:var(--surface-alt);color:var(--ink-muted);
+             border:1px solid var(--rule)}
+  .log .line::before{content:"›";position:absolute;left:12px;top:9px;font-weight:700;color:var(--ink-faint)}
+  .log .line:empty{display:none}
+  .log .line.ok{background:var(--green-soft);color:var(--green-ink);border-color:rgba(22,163,74,.25)}
+  .log .line.ok::before{content:"✓";color:var(--green-ink)}
+  .log .line.no{background:var(--red-soft);color:var(--red-ink);border-color:rgba(220,38,38,.25)}
+  .log .line.no::before{content:"✕";color:var(--red-ink)}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="row">
+    <span class="brand">MCP Apps Host</span>
+    <span class="tag">the frame draws · the host talks</span>
+    <span class="live" id="live"><i></i>live</span>
+  </div>
+</div>
+<div class="wrap">
+  <p class="note">
+    The surface below runs in a <b>sandboxed frame with an opaque origin</b>: it cannot read
+    this document, cannot touch storage, and cannot call the API. It receives a
+    surface by message and can name one registered action back. Every action it
+    names is checked against the served catalog before anything happens.
+  </p>
+
+  <div class="panel">
+    <div class="cap"><b>ui://</b> embedded surface <span class="pin">sandbox="allow-scripts"</span></div>
+    <iframe id="frame" src="/embed/frame" sandbox="allow-scripts"
+            title="embedded A2UI surface"></iframe>
+  </div>
+
+  <div class="panel logcard">
+    <div class="cap"><b>Host activity</b> — every message crossing the boundary</div>
+    <div class="log">
+      <div class="line" id="status">loading catalog and composed surface…</div>
+      <div class="line" id="gate"></div>
+      <div class="line" id="relay"></div>
+    </div>
+  </div>
+</div>
+<script>
+// ---- The host owns data and transport; the frame owns pixels.
+//
+// The frame is embedded with sandbox="allow-scripts" and NOT allow-same-origin.
+// That is the entire security posture: withholding allow-same-origin is what
+// makes the frame's origin opaque, so it cannot reach this document. The cost is
+// that it cannot fetch either, which is why the surface arrives by postMessage.
+//
+// Coming back the other way, a message is only acted on when it is from this
+// frame AND names an action the served catalog registered. The catalog is the
+// authority; this page does not keep its own list to drift out of sync. ----
+const RUN_ID = "__RUN_ID__";
+// Where the API lives, and who this client says it is. Both are stamped in by
+// the client server at request time; empty API_BASE means same origin, which is
+// what the combined single-process app serves.
+const API = "__API_BASE__";
+const CLIENT_ID = "__CLIENT_ID__";
+const frame = document.getElementById("frame");
+const line = (id,text,cls)=>{const e=document.getElementById(id);e.textContent=text;
+  e.className="line"+(cls?" "+cls:"");};
+
+let allowed = null;   // the registered action names, straight from /v1/catalog
+let surface = null;
+let turn = 0;         // which turn of the conversation a request belongs to
+
+// Every call to the API carries the client tag. It is not a credential and the
+// server does not treat it as one — it is attribution, so the server's log can
+// name which client asked rather than recording an anonymous request.
+function api(path,options){
+  const opts = options || {};
+  opts.headers = Object.assign({"X-Telltale-Client":CLIENT_ID}, opts.headers||{});
+  return fetch(API+path, opts);
+}
+
+// A tap is one turn. The id travels out with the request and comes back on the
+// reply, so a slow answer that lands after the next tap can be recognised as
+// stale instead of overwriting a newer interface.
+function tagged(scope){
+  turn += 1;
+  return {action:"request_data", scope:scope, turn:turn,
+          request_id:CLIENT_ID+"-"+turn+"-"+Date.now().toString(36)};
+}
+
+async function load(){
+  const cat = await (await api("/v1/catalog")).json();
+  allowed = cat.actions || [];
+
+  // Prefer a composed run when one exists; otherwise ask the framework for the
+  // current status, so the application stands up against a bus alone.
+  let origin = "run";
+  const composed = await api("/v1/runs/"+RUN_ID+"/composed");
+  if(composed.ok){
+    surface = (await composed.json()).surface;
+  }else{
+    const req = tagged("status");
+    const res = await api("/v1/telltale/request",{method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(req)});
+    const body = await res.json();
+    surface = body.surface;
+    origin = body.source + " bus";
+  }
+  line("status","client "+CLIENT_ID+" · catalog: "+allowed.length
+       +" registered actions · surface: "+(surface.components||[]).length
+       +" components from the "+origin);
+  post();
+}
+function post(){
+  if(!surface||!frame.contentWindow)return;
+  frame.contentWindow.postMessage({type:"a2ui.render",surface:surface},"*");
+}
+
+window.addEventListener("message",async e=>{
+  // Any page that can reach this one can post to it. Only the frame counts.
+  if(e.source!==frame.contentWindow)return;
+  const d=e.data;
+  if(!d||typeof d!=="object")return;
+
+  if(d.type==="a2ui.ready"){post();return;}
+  if(d.type==="a2ui.rendered"){return;}
+  if(d.type==="a2ui.size"){
+    // A number, clamped. The frame reports its height; it does not get to
+    // choose how much of the host's page it occupies.
+    const h=Math.max(40,Math.min(4000,Math.ceil(+d.height||0)));
+    frame.style.height=h+"px";
+    return;
+  }
+  if(d.type!=="a2ui.action")return;
+
+  const action=String(d.action==null?"":d.action);
+  if(!allowed||allowed.indexOf(action)<0){
+    // An action nobody registered never becomes a request.
+    line("gate","refused "+action+" — not a registered action","no");
+    line("relay","");
+    return;
+  }
+  line("gate","accepted "+action+" — registered in the catalog","ok");
+
+  // request_data is the surface asking the framework to go and look: read the
+  // bus, run the checks, compose the answer. The reply is a whole new surface,
+  // which is posted straight back into the frame — the interface updates
+  // itself without this page ever rendering any of it.
+  if(action==="request_data"){
+    const scope=(d.args&&d.args.scope)||"status";
+    const req=tagged(scope);
+    line("relay","turn "+req.turn+": requesting "+scope+" from the framework…");
+    const res=await api("/v1/telltale/request",{method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(req)});
+    const body=await res.json().catch(()=>({}));
+    if(!res.ok||!body.surface){
+      line("relay","framework refused: "+(body.detail||res.status),"no");
+      return;
+    }
+    // A reply for a turn we have already moved past is dropped rather than
+    // rendered: the newest tap owns the screen.
+    if(body.turn && body.turn < turn){
+      line("relay","turn "+body.turn+" answered late — kept turn "+turn,"no");
+      return;
+    }
+    surface=body.surface;
+    post();
+    const detail = body.scope==="diagnostics"
+      ? (body.checksFailed+" of "+body.checksRun+" checks failed · "
+         +body.storedCodes+" stored codes")
+      : (body.surface.dataModel.signalCount+" signals · "
+         +body.surface.dataModel.faultCount+" faults");
+    line("relay","turn "+body.turn+" · "+body.scope+" composed from the "
+         +body.source+" bus for "+body.requestedBy+" — "
+         +detail+" · "+body.componentCount+" components, "
+         +(body.clean?"0 rejected":body.rejections.length+" rejected"),"ok");
+    return;
+  }
+
+  const res = await api("/v1/action",{method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({run_id:RUN_ID,node_id:"surface",action:action,
+                         args:d.args||{}})});
+  const body = await res.json().catch(()=>({}));
+  line("relay", res.ok ? ("runtime resumed the graph on "+action)
+                       : ("runtime refused: "+(body.detail||res.status)),
+       res.ok?"ok":"no");
+});
+
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A2UI embedded surface</title>
+<style>
+  :root{
+    --bg:transparent;--surface:#FFF;--surface-alt:#F7F8FA;--surface-sunk:#F1F3F6;
+    --ink:#0B0F14;--ink-body:#1C222B;--ink-muted:#5B6572;--ink-faint:#8A93A0;
+    --rule:#E7EAEE;--rule-strong:#D3D8DF;
+    --accent:#2563EB;--accent-ink:#1D4FC4;--accent-soft:rgba(37,99,235,.08);
+    --green:#16A34A;--green-soft:rgba(22,163,74,.12);--green-ink:#15803D;
+    --amber:#D97706;--amber-soft:rgba(217,119,6,.13);--amber-ink:#B45309;
+    --red:#DC2626;--red-soft:rgba(220,38,38,.10);--red-ink:#B91C1C;
+    --slate-soft:rgba(91,101,114,.10);--slate-ink:#475061;
+    --radius-lg:16px;--radius-md:12px;--radius-sm:8px;
+    --shadow-card:0 1px 2px rgba(15,23,42,.04),0 6px 16px -10px rgba(15,23,42,.14);
+    --font-sans:-apple-system,"Segoe UI",system-ui,sans-serif;--font-mono:ui-monospace,"SF Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink-body);font-family:var(--font-sans);
+       font-size:14.5px;line-height:1.5;padding:2px;-webkit-font-smoothing:antialiased}
+  .Text{color:var(--ink-body);line-height:1.65;white-space:pre-wrap;margin:2px 0}
+  .Text.heading{font-family:var(--font-sans);font-size:21px;font-weight:700;color:var(--ink);
+                letter-spacing:-.01em;white-space:normal;margin:0 0 4px}
+  .Text.subtitle{color:var(--ink-muted);font-size:14px;font-weight:500}
+  .Text.caption{font-size:11.5px;color:var(--ink-faint);font-family:var(--font-mono);letter-spacing:.01em}
+  .Column{display:flex;flex-direction:column;gap:16px}
+  .List{display:flex;flex-direction:column;gap:10px}
+  .Row{display:flex;gap:14px;align-items:stretch;flex-wrap:wrap}
+  .Row>.chart,.Row>.Card{flex:1;min-width:150px}
+  /* Stat tiles are a header strip: they have to stay on one line as their
+     number grows, so they get a tighter floor than a content card. */
+  .Row>.StatTile{flex:1;min-width:112px;padding:14px 15px}
+  .Row>.StatTile .val{font-size:23px}
+
+  .Card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius-lg);
+        padding:18px 20px;box-shadow:var(--shadow-card)}
+  .Card>.ct{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px;
+            letter-spacing:.01em;display:flex;align-items:center;gap:8px}
+  .Card>.ct::before{content:"";width:3px;height:13px;border-radius:2px;background:var(--accent)}
+  .Divider{height:1px;background:var(--rule);margin:2px 0}
+
+  .StatTile{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius-md);
+            padding:16px 18px;box-shadow:var(--shadow-card);position:relative;overflow:hidden}
+  .StatTile::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--tone,var(--accent))}
+  .StatTile .lab{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-muted);font-weight:700}
+  .StatTile .val{font-size:26px;font-weight:800;color:var(--ink);margin-top:6px;letter-spacing:-.01em;
+                 display:flex;align-items:baseline;gap:5px}
+  .StatTile .val .unit{font-size:13px;font-weight:600;color:var(--ink-muted)}
+  .StatTile .dl{font-size:12px;color:var(--ink-muted);margin-top:4px;font-weight:500}
+
+  .chart{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius-lg);
+         padding:18px 20px;box-shadow:var(--shadow-card)}
+  .chart .ct{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px;letter-spacing:.01em}
+  .chart .sub{font-size:11px;color:var(--ink-faint);font-family:var(--font-mono);margin-bottom:12px}
+
+  .prog{height:10px;border-radius:999px;background:var(--surface-sunk);border:1px solid var(--rule);overflow:hidden}
+  .prog>i{display:block;height:100%;background:var(--green);border-radius:999px}
+
+  table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--rule);
+        border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-card)}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule);font-size:13.5px}
+  th{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;
+     color:var(--ink-muted);background:var(--surface-alt);font-weight:700}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover td{background:var(--surface-alt)}
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;
+         font-size:11.5px;font-weight:700;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.02em}
+  .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+  .badge.info{background:var(--slate-soft);color:var(--slate-ink)}
+  .badge.warn{background:var(--amber-soft);color:var(--amber-ink)}
+  .badge.severe{background:var(--amber-soft);color:var(--amber-ink)}
+  .badge.critical{background:var(--red-soft);color:var(--red-ink)}
+
+  .tabs{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap;background:var(--surface-sunk);
+        padding:4px;border-radius:var(--radius-md);border:1px solid var(--rule)}
+  .tabs button{border:none;background:transparent;border-radius:var(--radius-sm);padding:7px 11px;
+              font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--font-sans);
+              color:var(--ink-muted);transition:all 120ms;white-space:nowrap}
+  .tabs button:hover{color:var(--ink)}
+  .tabs button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(15,23,42,.12)}
+
+  .Notice{border:1px solid var(--rule);border-left:3px solid var(--amber);background:var(--amber-soft);
+          border-radius:var(--radius-md);padding:13px 15px;display:flex;gap:10px;align-items:flex-start;
+          font-size:13.5px;line-height:1.55}
+  .Notice.tone-bad{border-left-color:var(--red);background:var(--red-soft)}
+  .Notice.tone-good{border-left-color:var(--green);background:var(--green-soft)}
+  .Notice .glyph{font-size:15px;line-height:1.4;flex:none}
+
+  .actbtn{width:100%;text-align:center;border:1px solid var(--rule-strong);background:var(--surface);
+          border-radius:var(--radius-md);padding:13px;font-weight:700;font-size:14.5px;cursor:pointer;
+          color:var(--ink);transition:all 120ms;box-shadow:var(--shadow-card)}
+  .actbtn:hover{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-ink)}
+  .actbtn:active{transform:translateY(1px)}
+  .actbtn.primary{background:var(--ink);border-color:var(--ink);color:#fff}
+  .actbtn.primary:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+
+  input.field,select.field{padding:9px 11px;border:1px solid var(--rule-strong);border-radius:var(--radius-sm);font-size:14px}
+  .Text .md-h{font-weight:700;color:var(--ink);margin:12px 0 4px}
+  .Text .md-p{margin:6px 0;line-height:1.6}
+  .Text .md-ul{margin:6px 0 6px 4px;padding-left:18px}
+  .Text .md-ul li{margin:3px 0;line-height:1.55}
+  .idle{color:var(--ink-faint);font-style:italic;padding:24px;text-align:center;font-size:13.5px}
+
+  .kv{display:flex;flex-direction:column;gap:0;border:1px solid var(--rule);border-radius:var(--radius-sm);
+      overflow:hidden;margin:10px 0}
+  .kv .row{display:flex;justify-content:space-between;gap:12px;padding:8px 12px;font-size:13px;
+           border-bottom:1px solid var(--rule);background:var(--surface)}
+  .kv .row:last-child{border-bottom:none}
+  .kv .row:nth-child(even){background:var(--surface-alt)}
+  .kv .k{color:var(--ink-muted);font-family:var(--font-mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.03em}
+  .kv .v{color:var(--ink);font-weight:600;text-align:right}
+
+  .gaugegrid{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+  .gauge-legend{display:flex;gap:14px;margin-top:14px;padding-top:12px;border-top:1px solid var(--rule);
+                font-size:11px;color:var(--ink-faint);font-family:var(--font-mono)}
+  .gauge-legend span{display:inline-flex;align-items:center;gap:5px}
+  .gauge-legend i{width:7px;height:7px;border-radius:50%;display:inline-block}
+</style>
+</head>
+<body>
+<div id="mount"><div class="idle">waiting for a surface from the host</div></div>
+<script>
+// ---- An embedded A2UI surface.
+//
+// This document has an opaque origin: the host embeds it with
+// sandbox="allow-scripts" and deliberately withholds allow-same-origin. So it
+// cannot read the host, cannot touch host storage, and cannot call the API even
+// though the API is one hop away. It has exactly two capabilities: draw a
+// surface the host posts in, and name a registered action back.
+//
+// The renderer is the same shape as the standalone clients: catalog types map
+// to DOM, innerHTML is never assigned, and no string is ever evaluated. A
+// component is data; a widget draws it. ----
+const $ = (t,c)=>{const e=document.createElement(t);if(c)e.className=c;return e;};
+const T = t=>document.createTextNode(t==null?"":String(t));
+const resolve=(v,dm)=>(v&&typeof v==="object"&&"$bind"in v)?ptr(dm,v["$bind"]):v;
+const arr=v=>Array.isArray(v)?v:[];
+function ptr(dm,p){let c=dm;for(const s of String(p).split("/").slice(1)){if(c==null)return null;c=c[s];}return c;}
+
+// ---- safe markdown: parsed into DOM nodes, so markup in model text stays text ----
+function mdInline(line,parent){
+  const re=/(\*\*([^*]+)\*\*|\*([^*]+)\*|_([^_]+)_)/g;let last=0,m;
+  while((m=re.exec(line))){
+    if(m.index>last)parent.append(T(line.slice(last,m.index)));
+    if(m[2]!=null){const s=document.createElement("strong");s.textContent=m[2];parent.append(s);}
+    else{const e=document.createElement("em");e.textContent=(m[3]!=null?m[3]:m[4]);parent.append(e);}
+    last=re.lastIndex;
+  }
+  if(last<line.length)parent.append(T(line.slice(last)));
+}
+function md(text){
+  const frag=document.createDocumentFragment();let ul=null;
+  for(const raw of String(text==null?"":text).split(/\r?\n/)){
+    const line=raw.trim();if(!line){ul=null;continue;}
+    const h=line.match(/^(#{1,4})\s+(.*)/),b=line.match(/^[*\-]\s+(.*)/);
+    if(h){ul=null;const d=$("div","md-h");mdInline(h[2],d);frag.append(d);}
+    else if(b){if(!ul){ul=document.createElement("ul");ul.className="md-ul";frag.append(ul);}const li=document.createElement("li");mdInline(b[1],li);ul.append(li);}
+    else{ul=null;const p=$("div","md-p");mdInline(line,p);frag.append(p);}
+  }
+  return frag;
+}
+
+// ---- the only way out of this frame ----
+// A tap carries which control was tapped, because "the technician tapped
+// Lighting" is the whole content of the next turn. The label is text the
+// surface already showed — data, not code — and it is clamped here so a long
+// string cannot ride out through the event.
+function emit(action,args,label){
+  if(!action)return;
+  parent.postMessage({type:"a2ui.action",action:String(action),args:args||{},
+                      label:String(label==null?"":label).slice(0,120)},"*");
+}
+const act=v=>(v&&typeof v==="object")?v.action:null;
+
+const R={
+  Column:(c,x)=>{const e=$("div","Column");kids(c,x,e);return e;},
+  Row:(c,x)=>{const e=$("div","Row");kids(c,x,e);return e;},
+  List:(c,x)=>{const e=$("div","List");kids(c,x,e);return e;},
+  Card:(c,x)=>{const e=$("div","Card");if(c.title){const h=$("div","ct");h.append(T(c.title));e.append(h);}kids(c,x,e);return e;},
+  Divider:()=>$("div","Divider"),
+  Text:(c,x)=>{const e=$("div","Text "+(c.variant||"body"));const v=resolve(c.text,x.dm);
+    if((c.variant||"body")==="heading"){e.append(T(v));}else{e.append(md(v));}return e;},
+  Notice:(c,x)=>{const tone=c.tone||"neutral";const e=$("div","Notice"+(tone==="bad"?" tone-bad":tone==="good"?" tone-good":""));
+    const g=$("span","glyph");g.append(T(tone==="bad"?"⚠":tone==="good"?"✓":tone==="warn"?"⚠":"ℹ"));
+    const body=$("div");body.append(T(resolve(c.text,x.dm)));e.append(g,body);return e;},
+  StatTile:(c,x)=>{const e=$("div","StatTile");const tone=c.tone;
+    if(tone)e.style.setProperty("--tone","var(--"+(tone==="bad"?"red":tone==="good"?"green":tone==="warn"?"amber":"accent")+")");
+    const l=$("div","lab");l.append(T(c.label));
+    const v=$("div","val");v.append(T(String(resolve(c.value,x.dm))));
+    if(c.unit){const u=$("span","unit");u.append(T(c.unit));v.append(u);}
+    const d=$("div","dl");d.append(T(resolve(c.delta,x.dm)||""));e.append(l,v,d);return e;},
+  Timeline:(c,x)=>{const e=$("div","chart");const t=$("div","ct");t.append(T(c.title||"timeline"));const b=$("div");b.style.cssText="display:flex;flex-direction:column;gap:8px;margin-top:4px";(arr(resolve(c.events,x.dm))).forEach(ev=>{const r=$("div");r.style.cssText="display:flex;gap:10px;align-items:flex-start;font-size:14px";const dot=$("span");dot.textContent="●";dot.style.cssText="color:var(--accent);font-size:10px;margin-top:5px";const lab=$("div");lab.style.flex="1";mdInline(String(ev.label!=null?ev.label:(ev.kind!=null?ev.kind:JSON.stringify(ev))),lab);r.append(dot,lab);b.append(r);});e.append(t,b);return e;},
+  ProgressBar:(c,x)=>{const e=$("div","chart");const t=$("div","ct");t.append(T("progress"));const p=$("div","prog");const i=$("i");const val=+resolve(c.value,x.dm)||0;i.style.width=Math.min(100,val/(c.max||100)*100)+"%";p.append(i);e.append(t,p);return e;},
+  Sparkline:(c,x)=>{const e=$("div","chart");const t=$("div","ct");t.append(T("trend"));e.append(t,spark(arr(resolve(c.data,x.dm))));return e;},
+  BarChart:(c,x)=>{const e=$("div","chart");const t=$("div","ct");t.append(T(c.title||"chart"));e.append(t,bars(arr(resolve(c.data,x.dm)),c.xKey,c.yKey));return e;},
+  GaugeCluster:(c,x)=>{const e=$("div","chart");const t=$("div","ct");t.append(T(c.title||"gauges"));e.append(t,gauges(arr(resolve(c.gauges,x.dm))));return e;},
+  DataTable:(c,x)=>table(c,x),
+  Tabs:(c,x)=>tabs(c,x),
+  Button:(c,x)=>{const b=$("button","actbtn"+(act(c.onPress)==="approve"?" primary":""));let lab=resolve(c.label,x.dm);if(lab&&typeof lab==="object")lab=lab.label||lab.name||lab.text||lab.id||"Choose";lab=String(lab==null?"Choose":lab);b.append(T(lab));b.onclick=()=>emit(act(c.onPress),resolve((c.onPress||{}).args,x.dm),lab);return b;},
+  Image:(c,x)=>{const e=$("div","chart");e.append(T("[image]"));return e;},
+  TextField:(c,x)=>{const w=$("div");if(c.label){const l=$("div","lab");l.append(T(c.label));w.append(l);}const i=$("input","field");i.placeholder=c.placeholder||"";w.append(i);return w;},
+  CheckBox:(c,x)=>{const w=$("label");w.style.display="flex";w.style.gap="8px";const i=document.createElement("input");i.type="checkbox";w.append(i,T(c.label||""));return w;},
+  Slider:(c,x)=>{const w=$("div");if(c.label){const l=$("div","lab");l.append(T(c.label));w.append(l);}const i=document.createElement("input");i.type="range";i.min=c.min||0;i.max=c.max||100;w.append(i);return w;},
+  InputChoice:(c,x)=>{const s=$("select","field");(arr(resolve(c.options,x.dm))).forEach(o=>{const op=document.createElement("option");op.append(T(typeof o==="object"?(o.name||o.label||o.id):o));s.append(op);});return s;},
+  DateTime:(c,x)=>{const i=$("input","field");i.type="date";return i;},
+  Modal:(c,x)=>{const e=$("div","Card");if(c.title){const h=$("div","ct");h.append(T(c.title));e.append(h);}kids(c,x,e);return e;},
+  ApprovalCard:(c,x)=>{const e=$("div","Card");const s=$("div","ct");s.append(T(resolve(c.summary,x.dm)||"Approve?"));
+    const params=resolve(c.params,x.dm);
+    e.append(s,kv(params));
+    const row=$("div","Row");
+    const ok=$("button","actbtn primary");ok.append(T("Approve"));
+    ok.onclick=()=>emit(act(c.confirm)||"approve",params);
+    row.append(ok);
+    if(c.reject){const no=$("button","actbtn");no.append(T("Reject"));
+      no.onclick=()=>emit(act(c.reject)||"reject",params);row.append(no);}
+    e.append(row);return e;},
+};
+// A key/value strip built from text nodes, not a JSON blob a user has to parse.
+// Object|scalar in, rows out; never anything that could be markup.
+function kv(obj){
+  const wrap=$("div","kv");
+  if(obj&&typeof obj==="object"&&!Array.isArray(obj)){
+    Object.entries(obj).forEach(([k,v])=>{
+      const r=$("div","row");const kk=$("span","k");kk.append(T(k));
+      const vv=$("span","v");vv.append(T(typeof v==="object"?JSON.stringify(v):String(v)));
+      r.append(kk,vv);wrap.append(r);
+    });
+  }else{
+    const r=$("div","row");const vv=$("span","v");vv.append(T(String(obj==null?"":obj)));
+    r.append(vv);wrap.append(r);
+  }
+  return wrap;
+}
+const KNOWN_TONES=new Set(["info","warn","severe","critical"]);
+function kids(c,x,e){for(const id of (c.children||[])){const ch=x.byId[id];if(ch)e.append(node(ch,x));}}
+function node(c,x){const f=R[c.type];if(!f){const s=$("div");s.style.cssText="color:var(--red-ink);font-family:var(--font-mono);font-size:11px";s.append(T("[skipped "+c.type+"]"));return s;}
+  try{return f(c,x);}catch(err){const s=$("div");s.style.cssText="color:var(--red-ink);font-family:var(--font-mono);font-size:11px";s.append(T("[could not draw "+c.type+"]"));return s;}}
+function spark(v){const ns="http://www.w3.org/2000/svg",w=200,h=44,mx=Math.max(...v,1),mn=Math.min(...v,0),rg=(mx-mn)||1;const s=document.createElementNS(ns,"svg");s.setAttribute("viewBox",`0 0 ${w} ${h}`);s.setAttribute("width","100%");s.setAttribute("height",h);const p=document.createElementNS(ns,"polyline");p.setAttribute("points",v.map((y,i)=>`${i/(v.length-1||1)*w},${h-5-(y-mn)/rg*(h-10)}`).join(" "));p.setAttribute("fill","none");p.setAttribute("stroke","var(--green)");p.setAttribute("stroke-width","2.5");s.append(p);return s;}
+function bars(d,xk,yk){const ns="http://www.w3.org/2000/svg",w=300,h=150,pad=24,mx=Math.max(...d.map(r=>+r[yk]),1),bw=(w-pad*2)/(d.length||1)*.6;const s=document.createElementNS(ns,"svg");s.setAttribute("viewBox",`0 0 ${w} ${h}`);s.setAttribute("width","100%");d.forEach((r,i)=>{const x=pad+i*((w-pad*2)/d.length)+((w-pad*2)/d.length-bw)/2,bh=(+r[yk])/mx*(h-pad*2);const rc=document.createElementNS(ns,"rect");rc.setAttribute("x",x);rc.setAttribute("y",h-pad-bh);rc.setAttribute("width",bw);rc.setAttribute("height",bh);rc.setAttribute("rx",3);rc.setAttribute("fill","var(--accent)");s.append(rc);const tl=document.createElementNS(ns,"text");tl.setAttribute("x",x+bw/2);tl.setAttribute("y",h-8);tl.setAttribute("text-anchor","middle");tl.setAttribute("font-size","9");tl.setAttribute("fill","var(--ink-muted)");tl.textContent=r[xk];s.append(tl);});return s;}
+
+// ---- GaugeCluster: a bounded measurement against its limit. The sweep is
+// arithmetic on a number from the data model; the scale came from the DBC. ----
+// A gauge's colour comes from the same threshold that raises the fault, when
+// the caller supplies one. Fraction-of-range is only a fallback: a headlamp
+// drawing its nominal 1.2A sits low on a 0-25A encodable scale and would read
+// as failed, while a brake reservoir past the limit that stores a critical
+// code would still read as fine. A gauge that disagrees with the bus is the
+// one thing this component must never do.
+function gaugeTone(g,val,frac){
+  const num=v=>(v!=null&&isFinite(+v))?+v:null;
+  const warn=num(g.warn), alarm=num(g.alarm), inv=!!g.invert;
+  const past=(limit)=>inv?val<=limit:val>=limit;
+  if(alarm!=null&&past(alarm))return "var(--red)";
+  if(warn!=null&&past(warn))return "var(--amber)";
+  if(alarm!=null||warn!=null)return "var(--green)";
+  const sevFrac=inv?1-frac:frac;
+  return sevFrac>=.9?"var(--red)":sevFrac>=.75?"var(--amber)":"var(--green)";
+}
+// A gauge in alarm never sweeps less than this fraction of its arc.
+const ALARM_MIN_SWEEP=0.06;
+function gauge(g){
+  const ns="http://www.w3.org/2000/svg",w=110,h=78,cx=55,cy=58,r=40;
+  const val=+g.value||0, lo=(g.min==null?0:+g.min), hi=(g.max==null?100:+g.max);
+  const frac=Math.max(0,Math.min(1,(val-lo)/((hi-lo)||1)));
+  const arc=(from,to)=>{const a0=Math.PI*(1+from),a1=Math.PI*(1+to);
+    const p=document.createElementNS(ns,"path");
+    p.setAttribute("d",`M ${cx+r*Math.cos(a0)} ${cy+r*Math.sin(a0)} A ${r} ${r} 0 0 1 ${cx+r*Math.cos(a1)} ${cy+r*Math.sin(a1)}`);
+    p.setAttribute("fill","none");p.setAttribute("stroke-width","9");p.setAttribute("stroke-linecap","round");return p;};
+  const s=document.createElementNS(ns,"svg");
+  s.setAttribute("viewBox",`0 0 ${w} ${h}`);s.setAttribute("width","100%");
+  const track=arc(0,1);track.setAttribute("stroke","var(--rule)");
+  // Severity is drawn as arc length, and length is exactly what a failing
+  // signal has least of: a lamp that has failed completely reads zero, sweeps
+  // nothing, and disappears at the moment it matters most. So a gauge in warn
+  // or alarm gets a floor sweep, and the value readout is toned as well — a
+  // channel whose visibility does not depend on the magnitude of the fault.
+  // A healthy signal sitting low in its range is left alone; the floor is for
+  // severity, not for every small number.
+  const tone=gaugeTone(g,val,frac), severe=tone!=="var(--green)";
+  const fill=arc(0,severe?Math.max(frac,ALARM_MIN_SWEEP):(frac||0.001));
+  fill.setAttribute("stroke",tone);
+  s.append(track,fill);
+  const num=document.createElementNS(ns,"text");
+  num.setAttribute("x",cx);num.setAttribute("y",cy-4);num.setAttribute("text-anchor","middle");
+  num.setAttribute("font-size","17");num.setAttribute("font-weight","700");num.setAttribute("fill",severe?tone:"var(--ink)");
+  num.appendChild(T(String(Math.round(val*10)/10)));
+  const unit=document.createElementNS(ns,"text");
+  unit.setAttribute("x",cx);unit.setAttribute("y",cy+9);unit.setAttribute("text-anchor","middle");
+  unit.setAttribute("font-size","9");unit.setAttribute("fill","var(--ink-muted)");
+  unit.appendChild(T(String(g.unit==null?"":g.unit)));
+  s.append(num,unit);
+  const wrap=$("div");wrap.style.cssText="flex:1;min-width:104px;text-align:center";
+  const lab=$("div","lab");lab.style.cssText="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-muted);font-family:var(--font-mono)";
+  lab.append(T(String(g.label==null?"":g.label)));
+  wrap.append(s,lab);return wrap;
+}
+function gauges(list){
+  const frag=document.createDocumentFragment();
+  const row=$("div","gaugegrid");
+  (list||[]).forEach(g=>row.append(gauge(g||{})));
+  frag.append(row);
+  if((list||[]).length){
+    const legend=$("div","gauge-legend");
+    [["var(--green)","normal"],["var(--amber)","approaching limit"],["var(--red)","at limit"]]
+      .forEach(([color,label])=>{const s=$("span");const i=document.createElement("i");
+        i.style.background=color;s.append(i,T(label));legend.append(s);});
+    frag.append(legend);
+  }
+  return frag;
+}
+
+// A cell in a column named severity/status/tone is rendered as a coloured
+// badge when its own text is one of the known tone words. Everything else,
+// and every other column, stays a plain text node — this classifies literal
+// text the row already carries, it does not interpret anything as markup.
+// Columns may never be named while rows are bound. The row keys are
+// harness-owned data, not model-authored markup, so fall back to them;
+// named columns stay authoritative.
+function table(c,x){const wrap=$("div");const rows=arr(resolve(c.rows,x.dm));const named=c.columns?String(c.columns).split(",").map(s=>s.trim()).filter(Boolean):[];const cols=named.length?named:[...new Set(rows.flatMap(r=>Object.keys(r||{})))];const t=$("table");const tr=$("tr");cols.forEach(col=>{const th=$("th");th.append(T(col));tr.append(th);});t.append(tr);rows.forEach(r=>{const rr=$("tr");cols.forEach(col=>{const td=$("td");const val=r[col];
+  const word=String(val==null?"":val).toLowerCase();
+  if(/severity|status|tone/i.test(col)&&KNOWN_TONES.has(word)){
+    const b=$("span","badge "+word);b.append(T(word));td.append(b);
+  }else{td.append(T(val));}
+  rr.append(td);});t.append(rr);});wrap.append(t);return wrap;}
+function tabs(c,x){const wrap=$("div");const nav=$("div","tabs");const body=$("div");wrap.append(nav,body);const tabIds=c.children||[];function show(i){body.textContent="";const cc=x.byId[tabIds[i]];if(cc)body.append(node(cc,x));[...nav.children].forEach((b,j)=>b.classList.toggle("on",i===j));}
+  (String(c.labels||"").split(",")).forEach((lab,i)=>{const b=$("button");b.append(T(lab.trim()||("tab "+(i+1))));b.onclick=()=>show(i);nav.append(b);});
+  if(tabIds.length)show(0);return wrap;}
+
+function render(surface){
+  const byId={};(surface.components||[]).forEach(c=>byId[c.id]=c);
+  const x={byId,dm:surface.dataModel||{}};
+  const m=document.getElementById("mount");m.textContent="";
+  const root=byId[surface.root];
+  if(root){m.append(node(root,x));return;}
+  // A model can compose valid components and forget the container that holds
+  // them: every type known, every binding sound, a declared root id never
+  // emitted. This frame showed nothing at all in that case. Draw what did
+  // arrive, in order, skipping anything another component claims as a child.
+  const claimed=new Set();
+  (surface.components||[]).forEach(c=>(c.children||[]).forEach(id=>claimed.add(id)));
+  (surface.components||[]).filter(c=>!claimed.has(c.id)).forEach(c=>m.append(node(c,x)));
+}
+
+// ---- the host cannot measure this document across an opaque origin, and this
+// document cannot resize its own frame. So the height crosses as a message like
+// everything else; without it the surface is silently clipped. ----
+function reportSize(){
+  parent.postMessage({type:"a2ui.size",
+    // body, not documentElement: the document element already fills the frame,
+    // so measuring it can only ever grow and a short surface keeps the tall box.
+    height:Math.ceil(document.body.scrollHeight)},"*");
+}
+if(window.ResizeObserver){new ResizeObserver(reportSize).observe(document.body);}
+
+// ---- the host is the only thing this frame listens to ----
+window.addEventListener("message",e=>{
+  if(e.source!==window.parent)return;
+  const d=e.data;
+  if(!d||d.type!=="a2ui.render"||!d.surface)return;
+  render(d.surface);
+  parent.postMessage({type:"a2ui.rendered"},"*");
+  reportSize();
+});
+parent.postMessage({type:"a2ui.ready"},"*");
+</script>
+</body>
+</html>

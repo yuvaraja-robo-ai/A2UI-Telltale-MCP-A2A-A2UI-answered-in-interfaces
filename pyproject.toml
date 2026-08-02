@@ -1,0 +1,53 @@
+[project]
+name = "telltale"
+version = "0.1.0"
+description = "Telltale: a UI-only vehicle diagnostics application that answers every turn as a composed, catalog-validated interface"
+requires-python = ">=3.11"
+dependencies = [
+    "eagv3-s14code",
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
+    "pydantic>=2.6",
+    "cantools>=39",
+    "python-can>=4.3",
+]
+
+# S14Code is the framework, not a vendored copy. Telltale depends on it the way
+# any application depends on a library: by name, from a checkout beside it. The
+# catalog and the validator Telltale gates on are the ones that ship in the
+# pull request — if that PR changed the wall, this application would find out.
+[tool.uv.sources]
+eagv3-s14code = { path = "../S14Code", editable = true }
+
+[dependency-groups]
+dev = [
+    "playwright==1.60.0",
+    "pytest>=8",
+    "pytest-asyncio>=0.23",
+    "pytest-playwright>=0.5",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+telltale = "telltale.app:main"
+telltale-server = "telltale.app:serve_api"
+telltale-client = "telltale.app:serve_client"
+telltale-gateway = "telltale.glc_shim:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["telltale"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+ignore = ["E701", "E702"]

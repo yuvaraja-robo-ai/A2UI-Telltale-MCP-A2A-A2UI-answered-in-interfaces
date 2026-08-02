@@ -1,0 +1,253 @@
+{
+  "kind": "overview",
+  "focus": "",
+  "prompt": "A technician is standing at a test bench looking at a vehicle. Summarise the state of the vehicle so they can decide what to look at first, using ONLY the readings below.\n\nReadings from the bench bus (JSON):\n{\n \"source\": \"bench\",\n \"health\": \"critical\",\n \"readings\": [\n  {\n   \"label\": \"RadarBlockage\",\n   \"value\": 59.0,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 35.0,\n   \"alarm\": 45.0,\n   \"invert\": false\n  },\n  {\n   \"label\": \"TirePressureFL\",\n   \"value\": 152.0,\n   \"min\": 100,\n   \"max\": 350,\n   \"unit\": \"kPa\",\n   \"warn\": 200.0,\n   \"alarm\": 180.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"WasherFluidLevel\",\n   \"value\": 11.5,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 30.0,\n   \"alarm\": 20.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"BrakeFluidLevel\",\n   \"value\": 41.0,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 60.0,\n   \"alarm\": 45.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"EngCoolantTemp\",\n   \"value\": 124.0,\n   \"min\": -40,\n   \"max\": 215,\n   \"unit\": \"degC\",\n   \"warn\": 110.0,\n   \"alarm\": 118.0,\n   \"invert\": false\n  },\n  {\n   \"label\": \"HeadlampLoadFR\",\n   \"value\": 0.0,\n   \"min\": 0,\n   \"max\": 25,\n   \"unit\": \"A\",\n   \"warn\": 0.6,\n   \"alarm\": 0.3,\n   \"invert\": true\n  }\n ],\n \"storedFaults\": [\n  {\n   \"code\": \"P0562\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x20\"\n  },\n  {\n   \"code\": \"C0035\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x30\"\n  },\n  {\n   \"code\": \"P0217\",\n   \"severity\": \"severe\",\n   \"ecu\": \"0x10\"\n  },\n  {\n   \"code\": \"U0104\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x50\"\n  },\n  {\n   \"code\": \"B2477\",\n   \"severity\": \"severe\",\n   \"ecu\": \"0x60\"\n  },\n  {\n   \"code\": \"B1318\",\n   \"severity\": \"info\",\n   \"ecu\": \"0x40\"\n  },\n  {\n   \"code\": \"C0040\",\n   \"severity\": \"critical\",\n   \"ecu\": \"0x30\"\n  }\n ]\n}\n\nReport every reading you use as a metric carrying its own label, value, unit, min, max and the warn/alarm limits given here, so the numbers keep their scale. Do not invent readings that are not listed.",
+  "run_id": "run-0e38f3e58a36",
+  "provider": "ollama",
+  "model": "gemma4:latest",
+  "clean": true,
+  "coherent": true,
+  "structure": [],
+  "rejections": [],
+  "componentCount": 4,
+  "componentTypes": [
+    "Column",
+    "GaugeCluster",
+    "Text"
+  ],
+  "surface": {
+    "root": "root",
+    "components": [
+      {
+        "id": "root",
+        "type": "Column",
+        "children": [
+          "t1",
+          "s1",
+          "gauges_container"
+        ]
+      },
+      {
+        "id": "t1",
+        "type": "Text",
+        "variant": "heading",
+        "text": {
+          "$bind": "/title"
+        }
+      },
+      {
+        "id": "s1",
+        "type": "Text",
+        "variant": "body",
+        "text": {
+          "$bind": "/summary"
+        }
+      },
+      {
+        "id": "gauges_container",
+        "type": "GaugeCluster",
+        "title": {
+          "$bind": "/gauges/0/label"
+        },
+        "gauges": {
+          "$bind": "/gauges"
+        }
+      }
+    ],
+    "dataModel": {
+      "title": "Vehicle System Status Summary",
+      "goal": "A technician is standing at a test bench looking at a vehicle. Summarise the state of the vehicle so they can decide what to look at first, using ONLY the readings below.\n\nReadings from the bench bus (JSON):\n{\n \"source\": \"bench\",\n \"health\": \"critical\",\n \"readings\": [\n  {\n   \"label\": \"RadarBlockage\",\n   \"value\": 59.0,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 35.0,\n   \"alarm\": 45.0,\n   \"invert\": false\n  },\n  {\n   \"label\": \"TirePressureFL\",\n   \"value\": 152.0,\n   \"min\": 100,\n   \"max\": 350,\n   \"unit\": \"kPa\",\n   \"warn\": 200.0,\n   \"alarm\": 180.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"WasherFluidLevel\",\n   \"value\": 11.5,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 30.0,\n   \"alarm\": 20.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"BrakeFluidLevel\",\n   \"value\": 41.0,\n   \"min\": 0,\n   \"max\": 100,\n   \"unit\": \"%\",\n   \"warn\": 60.0,\n   \"alarm\": 45.0,\n   \"invert\": true\n  },\n  {\n   \"label\": \"EngCoolantTemp\",\n   \"value\": 124.0,\n   \"min\": -40,\n   \"max\": 215,\n   \"unit\": \"degC\",\n   \"warn\": 110.0,\n   \"alarm\": 118.0,\n   \"invert\": false\n  },\n  {\n   \"label\": \"HeadlampLoadFR\",\n   \"value\": 0.0,\n   \"min\": 0,\n   \"max\": 25,\n   \"unit\": \"A\",\n   \"warn\": 0.6,\n   \"alarm\": 0.3,\n   \"invert\": true\n  }\n ],\n \"storedFaults\": [\n  {\n   \"code\": \"P0562\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x20\"\n  },\n  {\n   \"code\": \"C0035\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x30\"\n  },\n  {\n   \"code\": \"P0217\",\n   \"severity\": \"severe\",\n   \"ecu\": \"0x10\"\n  },\n  {\n   \"code\": \"U0104\",\n   \"severity\": \"warn\",\n   \"ecu\": \"0x50\"\n  },\n  {\n   \"code\": \"B2477\",\n   \"severity\": \"severe\",\n   \"ecu\": \"0x60\"\n  },\n  {\n   \"code\": \"B1318\",\n   \"severity\": \"info\",\n   \"ecu\": \"0x40\"\n  },\n  {\n   \"code\": \"C0040\",\n   \"severity\": \"critical\",\n   \"ecu\": \"0x30\"\n  }\n ]\n}\n\nReport every reading you use as a metric carrying its own label, value, unit, min, max and the warn/alarm limits given here, so the numbers keep their scale. Do not invent readings that are not listed.",
+      "summary": "System health is reported as CRITICAL. Immediate attention is required due to multiple severe/critical faults detected, alongside several readings approaching or exceeding warning thresholds.",
+      "results": [],
+      "items": [],
+      "metrics": [
+        {
+          "label": "Radar Blockage",
+          "value": 59.0,
+          "unit": "%",
+          "min": 0,
+          "max": 100,
+          "warn": 35.0,
+          "alarm": 45.0
+        },
+        {
+          "label": "Tire Pressure FL",
+          "value": 152.0,
+          "unit": "kPa",
+          "min": 100,
+          "max": 350,
+          "warn": 200.0,
+          "alarm": 180.0
+        },
+        {
+          "label": "Washer Fluid Level",
+          "value": 11.5,
+          "unit": "%",
+          "min": 0,
+          "max": 100,
+          "warn": 30.0,
+          "alarm": 20.0
+        },
+        {
+          "label": "Brake Fluid Level",
+          "value": 41.0,
+          "unit": "%",
+          "min": 0,
+          "max": 100,
+          "warn": 60.0,
+          "alarm": 45.0
+        },
+        {
+          "label": "Engine Coolant Temp",
+          "value": 124.0,
+          "unit": "degC",
+          "min": -40,
+          "max": 215,
+          "warn": 110.0,
+          "alarm": 118.0
+        },
+        {
+          "label": "Headlamp Load FR",
+          "value": 0.0,
+          "unit": "A",
+          "min": 0,
+          "max": 25,
+          "warn": 0.6,
+          "alarm": 0.3
+        }
+      ],
+      "spark": [],
+      "table_rows": [],
+      "item_count": 0,
+      "source_count": 0,
+      "subjects": [],
+      "timeline": [
+        {
+          "time": "297",
+          "label": "run_started"
+        },
+        {
+          "time": "298",
+          "label": "graph_patched"
+        },
+        {
+          "time": "299",
+          "label": "task_started content"
+        },
+        {
+          "time": "300",
+          "label": "task_succeeded content"
+        },
+        {
+          "time": "301",
+          "label": "graph_patched"
+        },
+        {
+          "time": "302",
+          "label": "task_started surface"
+        }
+      ],
+      "progress_value": 1,
+      "progress_max": 2,
+      "intro": "System health is reported as CRITICAL. Immediate attention is required due to multiple severe/critical faults detected, alongside several readings approaching or exceeding warning thresholds.",
+      "section_0_heading": "Critical Faults Detected (Priority)",
+      "section_0_points": "\u2022 P0217 (Severe): Engine related fault in ECU 0x10.\n\u2022 B2477 (Severe): Body system fault in ECU 0x60.\n\u2022 C0040 (Critical): Communication/Control fault in ECU 0x30.",
+      "section_1_heading": "Warning Faults & Status",
+      "section_1_points": "\u2022 Multiple warning faults present (P0562, C0035, U0104) requiring investigation.\n\u2022 Brake Fluid Level is below the recommended warning threshold.",
+      "sections": [
+        {
+          "heading": "Critical Faults Detected (Priority)",
+          "points": [
+            "P0217 (Severe): Engine related fault in ECU 0x10.",
+            "B2477 (Severe): Body system fault in ECU 0x60.",
+            "C0040 (Critical): Communication/Control fault in ECU 0x30."
+          ]
+        },
+        {
+          "heading": "Warning Faults & Status",
+          "points": [
+            "Multiple warning faults present (P0562, C0035, U0104) requiring investigation.",
+            "Brake Fluid Level is below the recommended warning threshold."
+          ]
+        }
+      ],
+      "section_events": [
+        {
+          "time": "Critical Faults Detected (Priority)",
+          "label": "P0217 (Severe): Engine related fault in ECU 0x10.; B2477 (Severe): Body system fault in ECU 0x60.; C0040 (Critical): Communication/Control fault in ECU 0x30."
+        },
+        {
+          "time": "Warning Faults & Status",
+          "label": "Multiple warning faults present (P0562, C0035, U0104) requiring investigation.; Brake Fluid Level is below the recommended warning threshold."
+        }
+      ],
+      "metric_0_value": 59.0,
+      "metric_1_value": 152.0,
+      "metric_2_value": 11.5,
+      "metric_3_value": 41.0,
+      "metric_4_value": 124.0,
+      "metric_5_value": 0.0,
+      "gauges": [
+        {
+          "label": "Radar Blockage",
+          "value": 59.0,
+          "min": 0.0,
+          "max": 100.0,
+          "unit": "%",
+          "warn": 35.0,
+          "alarm": 45.0
+        },
+        {
+          "label": "Tire Pressure FL",
+          "value": 152.0,
+          "min": 100.0,
+          "max": 350.0,
+          "unit": "kPa",
+          "warn": 200.0,
+          "alarm": 180.0
+        },
+        {
+          "label": "Washer Fluid Level",
+          "value": 11.5,
+          "min": 0.0,
+          "max": 100.0,
+          "unit": "%",
+          "warn": 30.0,
+          "alarm": 20.0
+        },
+        {
+          "label": "Brake Fluid Level",
+          "value": 41.0,
+          "min": 0.0,
+          "max": 100.0,
+          "unit": "%",
+          "warn": 60.0,
+          "alarm": 45.0
+        },
+        {
+          "label": "Engine Coolant Temp",
+          "value": 124.0,
+          "min": -40.0,
+          "max": 215.0,
+          "unit": "degC",
+          "warn": 110.0,
+          "alarm": 118.0
+        },
+        {
+          "label": "Headlamp Load FR",
+          "value": 0.0,
+          "min": 0.0,
+          "max": 25.0,
+          "unit": "A",
+          "warn": 0.6,
+          "alarm": 0.3
+        }
+      ]
+    }
+  },
+  "attempt": 1,
+  "impoverished": false,
+  "attempts": [
+    "attempt 1: 3 types, 4 components"
+  ]
+}
